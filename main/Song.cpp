@@ -1,4 +1,3 @@
-#include <stdlib.h>
 class Song
 {
 
@@ -11,10 +10,11 @@ int *songNotes;
 float *songTimings;
 int *songDirections;
 int songLength;
+float debug = 0;
 
 enum SongDataType {Delay, TactLength, MaxPressDelay, Notes, Timings, Directions, Length};
 
-Song(int noteDelay, int TactLength, float maxPressDelay, int songNotes[], float songTimings[], int songDirections[], int songLength)
+Song(int noteDelay, int TactLength, float maxPressDelay, int *songNotes, float *songTimings, int *songDirections, int songSize)
 {
   setSongData(Song::Delay, noteDelay);
   setSongData(Song::TactLength, TactLength);
@@ -22,7 +22,7 @@ Song(int noteDelay, int TactLength, float maxPressDelay, int songNotes[], float 
   setSongData(Song::Notes, songNotes);
   setSongData(Song::Timings, songTimings);
   setSongData(Song::Directions, songDirections);
-  this->songLength = songLength;
+  this->songLength = songSize / sizeof(int);
 }
 
 void setSongData(SongDataType type, int data)
@@ -37,7 +37,7 @@ void setSongData(SongDataType type, int data)
       break;
   }
 }
-void setSongData(SongDataType type, int data[])
+void setSongData(SongDataType type, int *data)
 {
   switch(type)
   {
@@ -50,7 +50,7 @@ void setSongData(SongDataType type, int data[])
       delete [] songDirections;
       songDirections = new int[songLength];
       songDirections = data;
-      break;
+      break;      
   }
 }
 void setSongData(SongDataType type, float data)
@@ -59,10 +59,10 @@ void setSongData(SongDataType type, float data)
   {
     case MaxPressDelay:
       maxPressDelay = data;
-      break;
+      break;   
   }
 }
-void setSongData(SongDataType type, float data[])
+void setSongData(SongDataType type, float *data)
 {
   switch(type)
   {
@@ -70,7 +70,7 @@ void setSongData(SongDataType type, float data[])
       delete [] songTimings;
       songTimings = new float[songLength];
       songTimings = data;
-      break;
+      break;      
   }
 }
 
