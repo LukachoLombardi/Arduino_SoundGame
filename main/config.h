@@ -1,0 +1,14 @@
+#define  ONLYIMPORTANTOUTPUT false
+
+#define SPEAKERPIN 13
+
+#define MINLEDPIN_0 3
+#define MAXLEDPIN_0 7
+#define MINLEDPIN_1 8
+#define MAXLEDPIN_1 12
+
+#define MINLEDPIN 3
+#define MAXLEDPIN 12
+
+#define BUTTONPIN_0 14
+#define BUTTONPIN_1 15
