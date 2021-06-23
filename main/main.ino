@@ -31,9 +31,9 @@ int SongNotes[] = //use defined values from pitches.h (use SILENCE for silence).
   NOTE_A6,
   
 };
-int SongTimings[] = //assign a denominator for the TactLength Value for every note, which is then used to determine its absolute Length, depending on the Length of one tact
+float SongTimings[] = //assign a denominator for the TactLength Value for every note, which is then used to determine its absolute Length, depending on the Length of one tact
 {
-  4,4,?,?,8,8,8,8,8,16,8,?,4,4,?,?,8,8,8,8,8,?,?
+  4,4,4.0/3.0,4.0/3.0,8,8,8,8,8,16,8,4.0/3.0,4,4,4.0/3.0,4.0/3.0,8,8,8,8,8,4.0/3.0,4.0/3.0
 };
 int SongDirections[] = //set the directions as follows: 0=left, 1=right, and basically everything else for nothing but please use nothing = 2.
 {
