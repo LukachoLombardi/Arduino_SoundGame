@@ -1,4 +1,4 @@
-//its just pitches, not much more to say about this (and silence if you dont count silence as a pitch)
+//its just pitches, not much more to say about this (and silence if you count silence as a pitch)
 #define NOTE_B0  31
 #define NOTE_C1  33
 #define NOTE_CS1 35
