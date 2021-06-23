@@ -1,3 +1,4 @@
+#include <stdlib.h>
 class Song
 {
 
@@ -21,7 +22,7 @@ Song(int noteDelay, int TactLength, float maxPressDelay, int songNotes[], float 
   setSongData(Song::Notes, songNotes);
   setSongData(Song::Timings, songTimings);
   setSongData(Song::Directions, songDirections);
-  songLength = songLength;
+  this->songLength = songLength;
 }
 
 void setSongData(SongDataType type, int data)
@@ -41,14 +42,14 @@ void setSongData(SongDataType type, int data[])
   switch(type)
   {
     case Notes:
-      delete [] this->songNotes;
-      this->songNotes = new int[songLength];
-      this->songNotes = data;
+      delete [] songNotes;
+      songNotes = new int[songLength];
+      songNotes = data;
       break;
     case Directions:
-      delete [] this->songDirections;
-      this->songDirections = new int[songLength];
-      this->songDirections = data;
+      delete [] songDirections;
+      songDirections = new int[songLength];
+      songDirections = data;
       break;
   }
 }
@@ -66,9 +67,9 @@ void setSongData(SongDataType type, float data[])
   switch(type)
   {
     case Timings:
-      delete [] this->songTimings;
-      this->songTimings = new float[songLength];
-      this->songTimings = data;
+      delete [] songTimings;
+      songTimings = new float[songLength];
+      songTimings = data;
       break;
   }
 }

@@ -220,7 +220,7 @@ void setup() //some normal setup stuff (setting pins and serial initialization)
       println("setting pin " + String(i) + " to output");
   }
   //println("avg. accuracy: " + String(play(songNotes, songTimings, songDirections,  sizeof(songNotes)/sizeof(songNotes[0]), noteDelay, tactLength, maxPressDelay)) + " percent", true); //plays the song and prints the accuracy
-  println(test.songNotes[0]);
+  println(test.songLength);
   Serial.println(play(test));
 }
 
