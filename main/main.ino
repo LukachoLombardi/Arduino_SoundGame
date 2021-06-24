@@ -4,6 +4,7 @@
 #include "Song.cpp" //da mastapiece
 
 Logger logger = Logger();
+Song songs[8];
 
 int noteDelay = 512; //adds a small silent delay after each note
 int tactLength = 1500; //Length of the tact (in ms)
@@ -44,7 +45,7 @@ int songDirections[] = //set the directions as follows: 0=left, 1=right nothing 
   2,2,0,1,0,0,0,1,0,0,1,1,2,2,2,2,2,2,2,2,2,2,2
 };
 
-Song ACAT = Song(512,1500,1, songNotes, songTimings, songDirections, sizeof(songNotes));
+
 
 // NOTE_C7, 4, 2,
 // NOTE_D7, 4, 2
@@ -56,18 +57,6 @@ void resetLEDs(int minpin, int maxpin)
     digitalWrite(i,LOW);
   }
 }
-
-int* arrayFloatToInt(float input[], int size)
-{
-  int length = size / sizeof(float);
-  int output[length];
-  for(int i = 0; i < length; i++)
-  {
-    output[i] = (int)input[i];
-  }
-  return output;
-}
-
 
 float play(Song song)
 {
@@ -197,6 +186,7 @@ float measurePressDelay(int button, float maxPressDelay) //doesnt really "measur
 
 void setup() //some normal setup stuff (setting pins and serial initialization)
 {
+  songs[0] = Song(512,1500,1, songNotes, songTimings, songDirections, sizeof(songNotes));
   Serial.begin(9600);
   logger.init(&Serial);
   for (int i = BUTTONPIN_0 ; i <= BUTTONPIN_1 ; i++)
@@ -210,7 +200,7 @@ void setup() //some normal setup stuff (setting pins and serial initialization)
       pinMode(i, OUTPUT);
       logger.printline("setting pin " + String(i) + " to output");
   }
-  logger.printline("avg. accuracy: " + String(play(ACAT)) + " percent"); //plays the song and prints the accuracy
+  logger.printline("avg. accuracy: " + String(play(songs[0])) + " percent"); //plays the song and prints the accuracy
 }
 
 void loop() {}

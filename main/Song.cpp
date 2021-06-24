@@ -14,6 +14,7 @@ float debug = 0;
 
 enum SongDataType {Delay, TactLength, MaxPressDelay, Notes, Timings, Directions, Length};
 
+Song(){}
 Song(int noteDelay, int TactLength, float maxPressDelay, int *songNotes, float *songTimings, int *songDirections, int songSize)
 {
   setSongData(Song::Delay, noteDelay);
