@@ -1,5 +1,3 @@
-#define  ONLYIMPORTANTOUTPUT false
-
 #define SPEAKERPIN 13
 
 #define MINLEDPIN_0 3

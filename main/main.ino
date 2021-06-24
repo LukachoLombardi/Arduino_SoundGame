@@ -1,6 +1,9 @@
 #include "pitches.h" //getting pitches and silence
 #include "config.h" //getting some config const values as defines cus im lazy
+#include "Logger.h" //Logger class with three loglevels
 #include "Song.cpp" //da mastapiece
+
+Logger logger = Logger();
 
 int noteDelay = 512; //adds a small silent delay after each note
 int tactLength = 1500; //Length of the tact (in ms)
@@ -29,37 +32,22 @@ int songNotes[] = //use defined values from pitches.h (use SILENCE for silence).
   NOTE_E6,
   NOTE_G6,
   NOTE_G6,
-  NOTE_A6,
+  NOTE_A6
   
 };
 float songTimings[] = //assign a multiplication for the tactLength Value for every note, which is then used to determine its absolute Length, depending on the Length of one tact
 {
-1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,
+0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25
 };
-int songDirections[] = //set the directions as follows: 0=left, 1=right, and basically everything else for nothing but please use nothing = 2.
+int songDirections[] = //set the directions as follows: 0=left, 1=right nothing = 2.
 {
-  0,0,0,1,0,0,0,1,0,0,1,1,2,2,2,2,2,2,2,2,2,2,2
+  2,2,0,1,0,0,0,1,0,0,1,1,2,2,2,2,2,2,2,2,2,2,2
 };
 
 Song ACAT = Song(512,1500,1, songNotes, songTimings, songDirections, sizeof(songNotes));
 
 // NOTE_C7, 4, 2,
 // NOTE_D7, 4, 2
-template <typename T> //function to display serial output after initialization with a shortened syntax and two importance levels, which can be toggled in the config
-void println(T in, bool important = false)
-{
- if(!ONLYIMPORTANTOUTPUT)
- {
-  Serial.println(in);
- }
- else
- {
-  if (important)
-  {
-   Serial.println(in);
-  }
- }
-}
 
 void resetLEDs(int minpin, int maxpin)
 {
@@ -69,7 +57,7 @@ void resetLEDs(int minpin, int maxpin)
   }
 }
 
-int arrayFloatToInt(float input[], int size)
+int* arrayFloatToInt(float input[], int size)
 {
   int length = size / sizeof(float);
   int output[length];
@@ -88,7 +76,7 @@ float play(Song song)
 float play(int songNotes[], float songTimings[], int songDirections[], int songLength, int noteDelay, int tactLength, float maxPressDelay) //takes the Notes, the Timings, the Directions, the Length of the Song(IN NOTES, NOT IN MS!!!), the Length of a tact (IN MS, NOT IN NOTES!!!) and the max button press delay (Ill probably replace that with a multiplier for the absolute Length of a note).
 {
 
-  println("starting song", true);
+  logger.printline("starting song");
   float currentPressDelay = 0;
   float currentAcc = 0;
   float currentMaxPressDelay = 0;
@@ -104,7 +92,7 @@ float play(int songNotes[], float songTimings[], int songDirections[], int songL
 
     if(tactLength * currentTiming == INFINITY || currentDirection > 2 || currentNote < 0)
     {
-      println("something is wrong with the song input");
+      logger.printline("something is wrong with the song input", "severe");
       break;
     }    
 
@@ -112,7 +100,7 @@ float play(int songNotes[], float songTimings[], int songDirections[], int songL
     
     setLEDs(songDirections, songLength, i); //set the leds
     
-    println("playing tone with pitch, direction, Length: " + String(currentNote) + "," + String(currentDirection) + "," + String(tactLength*currentTiming));
+    logger.printline((String)("playing tone with pitch, direction, Length: " + (String)(currentNote) + "," + (String)(currentDirection) + "," + (String)(tactLength*currentTiming)));
 
     if(currentNote==0)
     {
@@ -122,12 +110,10 @@ float play(int songNotes[], float songTimings[], int songDirections[], int songL
     {
       tone(SPEAKERPIN, currentNote); //playing the current sound
     }
-
-    if(currentDirection == 0 || currentDirection == 1)
+    if(currentDirection < 2)
     {
-      
       currentPressDelay = measurePressDelay(currentDirection, currentMaxPressDelay);
-      currentAcc = currentPressDelay * currentMaxPressDelay;
+      currentAcc = currentPressDelay / currentMaxPressDelay;
       avgAcc += currentAcc;
       pressCount++;
       delay(tactLength * currentTiming - currentPressDelay); //waits until the note is over, depending on the time spent in measurePressDelay
@@ -138,11 +124,11 @@ float play(int songNotes[], float songTimings[], int songDirections[], int songL
     }
     
     noTone(SPEAKERPIN);
-    delay(tactLength*noteDelay); //adds a really smol delay after each note
+    delay(tactLength/noteDelay); //adds a really smol delay after each note
   }
   noTone(SPEAKERPIN);
   resetLEDs(MINLEDPIN, MAXLEDPIN);
-  println("end of song", true);
+  logger.printline("end of song");
   avgAcc /= pressCount;
   avgAcc = 100 - 100*avgAcc;
   return avgAcc; //returns the average accuracy
@@ -190,7 +176,7 @@ float measurePressDelay(int button, float maxPressDelay) //doesnt really "measur
     wrongPin = BUTTONPIN_0;
     break;
     default:
-    println("somethings wrong i can feel it", true);
+    logger.printline("somethings wrong i can feel it", "warning");
   }
 
     while(millis() - initialMillis <= maxPressDelay)
@@ -209,25 +195,22 @@ float measurePressDelay(int button, float maxPressDelay) //doesnt really "measur
   return maxPressDelay;
 }
 
-
 void setup() //some normal setup stuff (setting pins and serial initialization)
 {
   Serial.begin(9600);
-  println("Serial Initialized", true);
-
+  logger.init(&Serial);
   for (int i = BUTTONPIN_0 ; i <= BUTTONPIN_1 ; i++)
   {
       pinMode(i, INPUT_PULLUP);
-      println("setting pin " + String(i) + " to input_pullup");
+      logger.printline("setting pin " + String(i) + " to input_pullup");
   }
 
   for (int i = MINLEDPIN ; i <= MAXLEDPIN ; i++)
   {
       pinMode(i, OUTPUT);
-      println("setting pin " + String(i) + " to output");
+      logger.printline("setting pin " + String(i) + " to output");
   }
-  println("avg. accuracy: " + String(play(ACAT)) + " percent", true); //plays the song and prints the accuracy
-  println(ACAT.debug);
+  logger.printline("avg. accuracy: " + String(play(ACAT)) + " percent"); //plays the song and prints the accuracy
 }
 
 void loop() {}

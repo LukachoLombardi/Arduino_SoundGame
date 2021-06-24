@@ -5,9 +5,10 @@
 class Logger
 {
   public:
-    enum LogLevel {Info, Warning, Severe};
+    enum LogLevel {Debug, Info, Warning, Severe};
     struct LogConfig
     {
+      bool debug = false;
       bool info = false;
       bool warning = true;
       bool severe = true;
@@ -15,13 +16,19 @@ class Logger
   
     Logger(LogConfig conf);
     Logger();
-    static LogConfig generateConf(bool info, bool warning, bool severe);
+    void init(Stream *inStream);
+
+    static LogConfig generateConf(bool debug, bool info, bool warning, bool severe);
+    void setConf(LogConfig conf);
+
+    void printline(String in);
     void printline(String in, String level);
     void printline(String in, LogLevel level);
 
     
   private:
     LogConfig loggerConf;
+    Stream *stream;
 };
 
 #endif
