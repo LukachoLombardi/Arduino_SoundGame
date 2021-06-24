@@ -32,16 +32,16 @@ int songNotes[] = //use defined values from pitches.h (use SILENCE for silence).
   NOTE_A6,
   
 };
-float songTimings[] = //assign a denominator for the tactLength Value for every note, which is then used to determine its absolute Length, depending on the Length of one tact
+float songTimings[] = //assign a multiplication for the tactLength Value for every note, which is then used to determine its absolute Length, depending on the Length of one tact
 {
-  4,4,4,4,8,8,8,8,8,16,8,4,4,4,4,4,8,8,8,8,8,4/1,8
+1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,1/4,
 };
 int songDirections[] = //set the directions as follows: 0=left, 1=right, and basically everything else for nothing but please use nothing = 2.
 {
   0,0,0,1,0,0,0,1,0,0,1,1,2,2,2,2,2,2,2,2,2,2,2
 };
 
-Song test = Song(512,1500,1, songNotes, songTimings, songDirections, sizeof(songNotes));
+Song ACAT = Song(512,1500,1, songNotes, songTimings, songDirections, sizeof(songNotes));
 
 // NOTE_C7, 4, 2,
 // NOTE_D7, 4, 2
@@ -102,17 +102,17 @@ float play(int songNotes[], float songTimings[], int songDirections[], int songL
     int currentDirection = songDirections[i]; //get current direction
     float currentTiming = songTimings[i]; //get current timing
 
-    if(tactLength / currentTiming == INFINITY || currentDirection > 2 || currentNote < 0)
+    if(tactLength * currentTiming == INFINITY || currentDirection > 2 || currentNote < 0)
     {
       println("something is wrong with the song input");
       break;
     }    
 
-    currentMaxPressDelay = (maxPressDelay * (tactLength / currentTiming));
+    currentMaxPressDelay = (maxPressDelay * (tactLength * currentTiming));
     
     setLEDs(songDirections, songLength, i); //set the leds
     
-    println("playing tone with pitch, direction, Length: " + String(currentNote) + "," + String(currentDirection) + "," + String(tactLength/currentTiming));
+    println("playing tone with pitch, direction, Length: " + String(currentNote) + "," + String(currentDirection) + "," + String(tactLength*currentTiming));
 
     if(currentNote==0)
     {
@@ -127,18 +127,18 @@ float play(int songNotes[], float songTimings[], int songDirections[], int songL
     {
       
       currentPressDelay = measurePressDelay(currentDirection, currentMaxPressDelay);
-      currentAcc = currentPressDelay / currentMaxPressDelay;
+      currentAcc = currentPressDelay * currentMaxPressDelay;
       avgAcc += currentAcc;
       pressCount++;
-      delay(tactLength / currentTiming - currentPressDelay); //waits until the note is over, depending on the time spent in measurePressDelay
+      delay(tactLength * currentTiming - currentPressDelay); //waits until the note is over, depending on the time spent in measurePressDelay
     }
     else
     {
-      delay(tactLength / currentTiming);
+      delay(tactLength * currentTiming);
     }
     
     noTone(SPEAKERPIN);
-    delay(tactLength/noteDelay); //adds a really smol delay after each note
+    delay(tactLength*noteDelay); //adds a really smol delay after each note
   }
   noTone(SPEAKERPIN);
   resetLEDs(MINLEDPIN, MAXLEDPIN);
@@ -226,9 +226,8 @@ void setup() //some normal setup stuff (setting pins and serial initialization)
       pinMode(i, OUTPUT);
       println("setting pin " + String(i) + " to output");
   }
-  //println("avg. accuracy: " + String(play(songNotes, songTimings, songDirections,  sizeof(songNotes)/sizeof(songNotes[0]), noteDelay, tactLength, maxPressDelay)) + " percent", true); //plays the song and prints the accuracy
-  println(test.debug);
-  Serial.println(play(test));
+  println("avg. accuracy: " + String(play(ACAT)) + " percent", true); //plays the song and prints the accuracy
+  println(ACAT.debug);
 }
 
 void loop() {}
