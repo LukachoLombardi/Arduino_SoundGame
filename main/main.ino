@@ -1,15 +1,15 @@
+#include "LiquidCrystal_I2C.h"
+#include "Wire.h"
+
 #include "pitches.h" //getting pitches and silence
 #include "config.h" //getting some config const values as defines cus im lazy
 #include "Logger.h" //Logger class with three loglevels
 #include "Song.cpp" //da mastapiece
 
-Logger logger = Logger();
-Song songs[8];
-
-int noteDelay = 512; //adds a small silent delay after each note
-int tactLength = 1500; //Length of the tact (in ms)
-float maxPressDelay = 1; //NOTE: must be smaller or the same as tactLength/NoteTiming (DONT FORGET TO ADD DYNAMIC DELAYS!!!) EDIT: Added dynamic delays and changed accuracy to percent
-int songNotes[] = //use defined values from pitches.h (use SILENCE for silence).
+int noteDelay0 = 512; //adds a small silent delay after each note
+int tactLength0 = 1500; //Length of the tact (in ms)
+float maxPressDelay0 = 1; //NOTE: must be smaller or the same as tactLength/NoteTiming (DONT FORGET TO ADD DYNAMIC DELAYS!!!) EDIT: Added dynamic delays and changed accuracy to percent
+int songNotes0[] = //use defined values from pitches.h (use SILENCE for silence).
 {
   NOTE_A5,
   NOTE_C6,
@@ -36,16 +36,17 @@ int songNotes[] = //use defined values from pitches.h (use SILENCE for silence).
   NOTE_A6
   
 };
-float songTimings[] = //assign a multiplication for the tactLength Value for every note, which is then used to determine its absolute Length, depending on the Length of one tact
+float songTimings0[] = //assign a multiplication for the tactLength Value for every note, which is then used to determine its absolute Length, depending on the Length of one tact
 {
 0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25
 };
-int songDirections[] = //set the directions as follows: 0=left, 1=right nothing = 2.
+int songDirections0[] = //set the directions as follows: 0=left, 1=right nothing = 2.
 {
   2,2,0,1,0,0,0,1,0,0,1,1,2,2,2,2,2,2,2,2,2,2,2
 };
 
-
+Logger logger = Logger();
+Song songs[8];
 
 // NOTE_C7, 4, 2,
 // NOTE_D7, 4, 2
@@ -186,7 +187,7 @@ float measurePressDelay(int button, float maxPressDelay) //doesnt really "measur
 
 void setup() //some normal setup stuff (setting pins and serial initialization)
 {
-  songs[0] = Song(512,1500,1, songNotes, songTimings, songDirections, sizeof(songNotes));
+  songs[0] = Song(512,1500,1, songNotes0, songTimings0, songDirections0, sizeof(songNotes0));
   Serial.begin(9600);
   logger.init(&Serial);
   for (int i = BUTTONPIN_0 ; i <= BUTTONPIN_1 ; i++)

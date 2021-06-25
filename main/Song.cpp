@@ -23,7 +23,7 @@ Song(int noteDelay, int TactLength, float maxPressDelay, int *songNotes, float *
   setSongData(Song::Notes, songNotes);
   setSongData(Song::Timings, songTimings);
   setSongData(Song::Directions, songDirections);
-  this->songLength = songSize / sizeof(int);
+  setSongData(Song::Length, int(songSize / sizeof(int)));
 }
 
 void setSongData(SongDataType type, int data)
@@ -36,7 +36,11 @@ void setSongData(SongDataType type, int data)
     case TactLength:
       tactLength = data;
       break;
+    case Length:
+      songLength = data;
+      break;      
   }
+
 }
 void setSongData(SongDataType type, int *data)
 {
