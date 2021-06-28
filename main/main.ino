@@ -1,11 +1,14 @@
 #include "pitches.h" //getting pitches and silence
 #include "config.h" //getting some config const values as defines cus im lazy
 #include "Logger.h" //Logger class with three loglevels
-#include "Song.cpp" //da mastapiece
+#include "Song.h" //da mastapiece
 #include "Songs.h" //Songs from seperate file
+#include "DisplayTools.h" //lcd utils class
 
 Logger logger = Logger();
 Song songs[8];
+
+DisplayTools lcdTools = DisplayTools();
 
 // NOTE_C7, 4, 2,
 // NOTE_D7, 4, 2
@@ -146,9 +149,11 @@ float measurePressDelay(int button, float maxPressDelay) //doesnt really "measur
 
 void setup() //some normal setup stuff (setting pins and serial initialization)
 {
-  songs[0] = Song(512,1500,1, songNotes0, songTimings0, songDirections0, sizeof(songNotes0));
+  songs[0] = Song(512,1500,1, songNotes0, songTimings0, songDirections0, sizeof(songNotes0), "ACAT");
+
   Serial.begin(9600);
   logger.init(&Serial);
+
   for (int i = BUTTONPIN_0 ; i <= BUTTONPIN_1 ; i++)
   {
       pinMode(i, INPUT_PULLUP);
@@ -159,6 +164,11 @@ void setup() //some normal setup stuff (setting pins and serial initialization)
   {
       pinMode(i, OUTPUT);
       logger.printline("setting pin " + String(i) + " to output");
+  }
+
+  for(int i = 0; i < Song::songCount; i++)
+  {
+    lcdTools.prompt(songs[i].name, "next", "play", BUTTONPIN_0, BUTTONPIN_1);
   }
   logger.printline("avg. accuracy: " + String(play(songs[0])) + " percent"); //plays the song and prints the accuracy
 }

@@ -8,17 +8,15 @@
 class DisplayTools
 {
   private:
-  static int buttonPress;
-  static void interruptNoButton();
-  static void interruptYesButton();
+  LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 16, 2);
 
   public:
-  static LiquidCrystal_I2C *lcd;
-  static void init(LiquidCrystal_I2C *lcd);
+  DisplayTools();
+  void init();
 
-  static void print(String text);
+  void print(String text);
   
-  static bool prompt(char prompt[16], char yes[7], char no[7], int noPin, int yesPin);
+  bool prompt(String prompt, String yes, String no, int noPin, int yesPin);
 };
 
 #endif
