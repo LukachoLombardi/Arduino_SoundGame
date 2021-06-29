@@ -1,9 +1,6 @@
 #include "Song.h"
-#include "Arduino.h"
-int Song::songCount = 0;
-
 Song::Song(){}
-Song::Song(int noteDelay, int TactLength, float maxPressDelay, int *songNotes, float *songTimings, int *songDirections, int songSize, String name)
+Song::Song(int noteDelay, int TactLength, float maxPressDelay, int *songNotes, float *songTimings, int *songDirections, int songSize)
 {
   setSongData(Song::Delay, noteDelay);
   setSongData(Song::TactLength, TactLength);
@@ -12,9 +9,6 @@ Song::Song(int noteDelay, int TactLength, float maxPressDelay, int *songNotes, f
   setSongData(Song::Timings, songTimings);
   setSongData(Song::Directions, songDirections);
   setSongData(Song::Length, int(songSize / sizeof(int)));
-
-  this->name = name;
-  Song::songCount++;
 }
 
 void Song::setSongData(SongDataType type, int data)
