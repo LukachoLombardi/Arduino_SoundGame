@@ -5,14 +5,12 @@
 #include "config.h" //getting some config const values as defines cus im lazy
 #include "Logger.h" //Logger class with three loglevels
 #include "Song.h" //da mastapiece
-#include "songs.h"
+#include "songs.h" //songs from another file
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-
-
 Logger logger = Logger();
-Song songs[8];
+Song songs[1];
 
 // NOTE_C7, 4, 2,
 // NOTE_D7, 4, 2
@@ -25,11 +23,11 @@ void resetLEDs(int minpin, int maxpin)
   }
 }
 
-float play(Song song)
+float play(Song song, bool useDisplay)
 {
-  return play(song.songNotes, song.songTimings, song.songDirections, song.songLength, song.noteDelay, song.tactLength, song.maxPressDelay);
+  return play(song.songNotes, song.songTimings, song.songDirections, song.songLength, song.noteDelay, song.tactLength, song.maxPressDelay, useDisplay);
 }
-float play(int songNotes[], float songTimings[], int songDirections[], int songLength, int noteDelay, int tactLength, float maxPressDelay) //takes the Notes, the Timings, the Directions, the Length of the Song(IN NOTES, NOT IN MS!!!), the Length of a tact (IN MS, NOT IN NOTES!!!) and the max button press delay (Ill probably replace that with a multiplier for the absolute Length of a note).
+float play(int songNotes[], float songTimings[], int songDirections[], int songLength, int noteDelay, int tactLength, float maxPressDelay, bool useDisplay) //takes the Notes, the Timings, the Directions, the Length of the Song(IN NOTES, NOT IN MS!!!), the Length of a tact (IN MS, NOT IN NOTES!!!) and the max button press delay (Ill probably replace that with a multiplier for the absolute Length of a note).
 {
 
   logger.printline("starting song");
@@ -72,6 +70,8 @@ float play(int songNotes[], float songTimings[], int songDirections[], int songL
       currentAcc = currentPressDelay / currentMaxPressDelay;
       avgAcc += currentAcc;
       pressCount++;
+      logger.printline("acc.: " + (String)(100-currentAcc*100) + "%");
+      if(useDisplay) {dispPrint("acc.: " + (String)(100-currentAcc*100) + "%");}
       delay(tactLength * currentTiming - currentPressDelay); //waits until the note is over, depending on the time spent in measurePressDelay
     }
     else
@@ -152,10 +152,15 @@ float measurePressDelay(int button, float maxPressDelay) //doesnt really "measur
 }
 
 void dispPrint(String text) {
+  lcd.setCursor(0,0);
+  lcd.print(text);
+}
+void dispPrint2(String text) {
+  lcd.setCursor(0,1);
   lcd.print(text);
 }
 
-bool prompt(String prompt, String yes, String no, int noPin, int yesPin) {
+bool prompt(char *prompt, String yes, String no, int noPin, int yesPin) {
   lcd.setCursor(7, 1);
   lcd.print(no);
   lcd.setCursor(0, 1);
@@ -178,8 +183,9 @@ void setup() //some normal setup stuff (setting pins and serial initialization)
 {
   lcd.init();
   lcd.backlight();
-  
-  songs[0] = Song(512,1500,1, songNotes0, songTimings0, songDirections0, sizeof(songNotes0));
+
+  Song::songCount = 0;
+  songs[0] = Song(512,1500,1, songNotes0, songTimings0, songDirections0, sizeof(songNotes0), "Evangelion");
 
   
   Serial.begin(9600);
@@ -195,9 +201,30 @@ void setup() //some normal setup stuff (setting pins and serial initialization)
       pinMode(i, OUTPUT);
       logger.printline("setting pin " + String(i) + " to output");
   }
-  
   //logger.printline((String)prompt("test", "no", "yes", BUTTONPIN_0, BUTTONPIN_1));
-  logger.printline("avg. accuracy: " + String(play(songs[0])) + " percent"); //plays the song and prints the accuracy
+  //logger.printline((String)play(songs[0], true));
 }
 
-void loop() {}
+void loop() 
+{
+    for(int i = 0; i < Song::songCount; i++)
+  {
+    if(prompt(songs[i].songName, "next", "play", BUTTONPIN_0, BUTTONPIN_1))
+    {
+      if(prompt("mode?", "try", "play", BUTTONPIN_0, BUTTONPIN_1))
+      {
+        float accuracy = play(songs[i], true);
+        logger.printline("avg. accuracy: " + String(accuracy) + " percent");
+        dispPrint("avg. acc.:");   
+        dispPrint2((String)accuracy);
+        delay(2500);
+        break;
+      }
+      else {play(songs[i], false); break;}
+    }
+    else
+    {
+      continue;
+    }
+  }
+}
