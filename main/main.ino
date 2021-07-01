@@ -77,8 +77,8 @@ float play(int songNotes[], float songTimings[], int songDirections[], int songL
     }
     else
     {
-      if(useDisplay){delay(tactLength * currentTiming + 25);}
-      else {delay(tactLength * currentTiming);} //make each delay a bit longer to accomodate for time lost to lcd printing
+      if(useDisplay){delay(tactLength * currentTiming + 0);}
+      else {delay(tactLength * currentTiming);} //make each delay a bit longer to accomodate for time lost to lcd printing (deactivated it because you cant really notice it
     }
     
     noTone(SPEAKERPIN);
