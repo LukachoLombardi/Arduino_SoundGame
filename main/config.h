@@ -1,12 +1,12 @@
-#define SPEAKERPIN 13
+#define SPEAKERPIN 14
 
-#define MINLEDPIN_0 3
-#define MAXLEDPIN_0 7
-#define MINLEDPIN_1 8
-#define MAXLEDPIN_1 12
+#define MINLEDPIN_0 4
+#define MAXLEDPIN_0 8
+#define MINLEDPIN_1 9
+#define MAXLEDPIN_1 13
 
-#define MINLEDPIN 3
-#define MAXLEDPIN 12
+#define MINLEDPIN 4
+#define MAXLEDPIN 13
 
-#define BUTTONPIN_0 14
-#define BUTTONPIN_1 15
+#define BUTTONPIN_0 2
+#define BUTTONPIN_1 3

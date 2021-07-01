@@ -1,5 +1,5 @@
 const int noteDelay0 = 512; //adds a small silent delay after each note
-const int tactLength0 = 1500; //Length of the tact (in ms)
+const int tactLength0 = 1200; //Length of the tact (in ms)
 const float maxPressDelay0 = 1; //NOTE: must be smaller or the same as tactLength/NoteTiming (DONT FORGET TO ADD DYNAMIC DELAYS!!!) EDIT: Added dynamic delays and changed accuracy to percent
 const int songNotes0[] = //use defined values from pitches.h (use SILENCE for silence).
 {
