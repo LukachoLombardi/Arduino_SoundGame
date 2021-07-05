@@ -78,7 +78,7 @@ float play(int songNotes[], float songTimings[], int songDirections[], int songL
     else
     {
       if(useDisplay){delay(tactLength * currentTiming + 0);}
-      else {delay(tactLength * currentTiming);} //make each delay a bit longer to accomodate for time lost to lcd printing (deactivated it because you cant really notice it)
+      else {delay(tactLength * currentTiming);} //make each delay a bit longer to accomodate for time lost to lcd printing (deactivated it because you cant really notice it
     }
     
     noTone(SPEAKERPIN);
@@ -141,6 +141,8 @@ float measurePressDelay(int button, float maxPressDelay) //doesnt really "measur
       if(digitalRead(wrongPin) == 0)
       {
         delay(maxPressDelay - (millis() - initialMillis));
+        break;
+      }
       if(digitalRead(pin) == 0)
       {
        return int(millis()-initialMillis);
@@ -168,7 +170,6 @@ bool prompt(char *prompt, String yes, String no, int noPin, int yesPin) {
   lcd.setCursor(0, 0);
   lcd.print(prompt);
   while(digitalRead(noPin) == HIGH && digitalRead(yesPin) == HIGH){digitalRead(noPin); digitalRead(yesPin);}
-  lcd.clear();
   if(digitalRead(noPin) == LOW)
   {
     logger.printline((String)prompt + " false", "debug");
