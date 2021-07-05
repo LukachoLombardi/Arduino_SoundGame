@@ -1,5 +1,6 @@
-#include "LiquidCrystal_I2C.h"
-#include "Wire.h"
+#include <Wire.h>
+#include <hd44780.h>
+#include <hd44780ioClass/hd44780_I2Cexp.h>
 
 #include "pitches.h" //getting pitches and silence
 #include "config.h" //getting some config const values as defines cus im lazy
@@ -7,7 +8,7 @@
 #include "Song.h" //da mastapiece
 #include "songs.h" //songs from another file
 
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+hd44780_I2Cexp lcd(0x27, 16, 2);
 
 Logger logger = Logger();
 Song songs[1];
@@ -78,7 +79,7 @@ float play(int songNotes[], float songTimings[], int songDirections[], int songL
     else
     {
       if(useDisplay){delay(tactLength * currentTiming + 0);}
-      else {delay(tactLength * currentTiming);} //make each delay a bit longer to accomodate for time lost to lcd printing (deactivated it because you cant really notice it
+      else {delay(tactLength * currentTiming);} //make each delay a bit longer to accomodate for time lost to lcd printing, deactivated it because you cant really notice it
     }
     
     noTone(SPEAKERPIN);
@@ -153,7 +154,7 @@ float measurePressDelay(int button, float maxPressDelay) //doesnt really "measur
 
 void dispPrint(String text) {
   lcd.clear();
-  lcd.setCursor(0,0);
+  lcd.home();
   lcd.print(text);
 }
 void dispPrint2(String text) {
